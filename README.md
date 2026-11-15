@@ -117,6 +117,11 @@ This is a visualization and prototyping tool, not certified for mission decision
 `IAU_MOON` (low precision) and Earth visibility is geometric; it does not guarantee an RF link.
 The 3D models are illustrative. The app's **Model integrity** view explains this in detail.
 
+## License
+
+The code is released under the [MIT License](LICENSE). Third-party content keeps its own terms:
+Three.js (`vendor/three/`) is MIT-licensed, and the SPICE kernels and LOLA data come from NASA/JPL.
+
 ## Team and contributions
 
 All the code was pushed to this repository from a single account. This is who actually built each part:
