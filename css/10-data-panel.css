@@ -1,0 +1,838 @@
+/* Right data column (built in js/workspace-controller.js): scenario controls, window results,
+   timeline and instant readings visible without opening any view. Minimum text size ~13px.
+   Also enlarges the tiny labels of the 3D views on the left. Loaded last, so it wins over earlier files. */
+.nova-data {
+  --d-sun: #ffc66d;
+  --d-earth: #6cc4ff;
+  --d-power: #5ce0ae;
+  --d-text: #eef6ff;
+  --d-muted: #93abc7;
+  gap: 18px;
+  padding-top: 4px;
+}
+
+/* Cards */
+.nova-card {
+  padding: 18px 20px;
+  border: 1px solid rgba(136, 187, 230, 0.18);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(17, 31, 53, 0.9), rgba(7, 14, 27, 0.92));
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+.nova-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-bottom: 14px;
+}
+.nova-card-head h2 {
+  margin: 0;
+  font:
+    700 18px/1.2 'Sora',
+    'Space Grotesk',
+    sans-serif;
+  letter-spacing: -0.02em;
+  color: var(--d-text);
+}
+.nova-card-note {
+  font-size: 13px;
+  color: var(--d-muted);
+}
+
+/* 1. Scenario */
+.nova-scenario-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+.nova-scenario .field {
+  margin: 0;
+  min-width: 0;
+}
+.nova-scenario .field label {
+  font:
+    600 13px 'Space Grotesk',
+    sans-serif;
+  color: var(--d-muted);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.nova-scenario .field select,
+.nova-scenario .field input {
+  font:
+    600 15px 'Space Grotesk',
+    sans-serif;
+  padding: 11px 12px;
+  border-radius: 10px;
+  min-height: 46px;
+}
+/* Date range: quick window lengths under the End date */
+.range-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.range-chips button {
+  padding: 4px 10px;
+  border: 1px solid rgba(136, 187, 230, 0.3);
+  border-radius: 99px;
+  background: transparent;
+  color: #a9c0d8;
+  font:
+    600 13px 'Space Grotesk',
+    sans-serif;
+  cursor: pointer;
+}
+.range-chips button:hover {
+  border-color: #8adfff;
+  color: #eef6ff;
+}
+.range-chips button[aria-pressed='true'] {
+  background: #8adfff;
+  border-color: #8adfff;
+  color: #06111f;
+}
+.range-chips button:focus-visible {
+  outline: 2px solid #8bdfff;
+  outline-offset: 2px;
+}
+
+/* 2. Results over the window */
+.nova-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.nova-stat {
+  --c: var(--d-sun);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 14px 15px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(136, 187, 230, 0.12);
+  border-top: 3px solid var(--c);
+}
+.nova-stat--earth {
+  --c: var(--d-earth);
+}
+.nova-stat--power {
+  --c: var(--d-power);
+}
+.nova-stat-label {
+  font:
+    600 14px 'Space Grotesk',
+    sans-serif;
+  color: var(--d-text);
+}
+.nova-stat strong {
+  font:
+    700 clamp(24px, 2.4vw, 34px) / 1.1 'Sora',
+    'Space Grotesk',
+    sans-serif;
+  color: var(--c);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.nova-stat-sub {
+  font-size: 13px;
+  color: var(--d-muted);
+}
+.nova-meter {
+  height: 8px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+.nova-meter i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 99px;
+  background: var(--c);
+  transition: width 0.4s ease;
+}
+.nova-stat-next {
+  font-size: 14px;
+  color: #dbe8f7;
+}
+
+/* Scenario: header actions and "More options" */
+.nova-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.nova-card-actions .btn {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+#compareBadge {
+  margin-left: 4px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  font-size: 12px;
+}
+.nova-more {
+  margin-top: 12px;
+  border-top: 1px solid rgba(136, 187, 230, 0.12);
+  padding-top: 10px;
+}
+.nova-more > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+.nova-more > summary::-webkit-details-marker {
+  display: none;
+}
+.nova-more .nova-coordinate-tag {
+  font:
+    500 13px 'IBM Plex Mono',
+    monospace;
+  color: var(--d-muted);
+}
+.nova-more-toggle {
+  font:
+    600 14px 'Space Grotesk',
+    sans-serif;
+  color: #8adfff;
+}
+.nova-more-toggle::after {
+  content: ' ▾';
+  display: inline-block;
+  transition: transform 0.2s;
+}
+.nova-more[open] .nova-more-toggle::after {
+  transform: rotate(180deg);
+}
+.nova-more > summary:focus-visible {
+  outline: 2px solid #8bdfff;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.nova-more-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+.nova-more-group {
+  min-width: 0;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(136, 187, 230, 0.12);
+}
+.nova-more-group--wide {
+  grid-column: 1/-1;
+}
+.nova-more-group h3 {
+  margin: 0 0 10px;
+  font:
+    700 14px 'Sora',
+    'Space Grotesk',
+    sans-serif;
+  color: var(--d-text);
+}
+.nova-more-group .field label {
+  font:
+    600 13px 'Space Grotesk',
+    sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--d-muted);
+}
+.nova-more-group .field input {
+  font-size: 14px;
+}
+.nova-more-group .field-note,
+.nova-more-group .status-note {
+  font-size: 13px;
+}
+.nova-more-group .spice-bridge__copy,
+#spiceServiceStatus {
+  font-size: 13px;
+}
+.nova-more-group .btn {
+  font-size: 13px;
+}
+
+/* Survival & contact dropdown under the window results (js/ui/render.js renderExtendedStats) */
+.nova-extra {
+  margin-top: 12px;
+  border-top: 1px solid rgba(136, 187, 230, 0.12);
+  padding-top: 10px;
+}
+.nova-extra > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 18px;
+  cursor: pointer;
+  list-style: none;
+}
+.nova-extra > summary::-webkit-details-marker {
+  display: none;
+}
+.nova-extra > summary .nova-more-toggle {
+  margin-left: auto;
+}
+.nova-extra[open] .nova-more-toggle::after {
+  transform: rotate(180deg);
+}
+.nova-extra[open] .nova-extra__item {
+  display: none;
+} /* the cards below show the same values */
+.nova-extra > summary:focus-visible {
+  outline: 2px solid #8bdfff;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.nova-extra__item {
+  font:
+    600 14px 'Space Grotesk',
+    sans-serif;
+  color: #dfeaf7;
+}
+.nova-extra__item b {
+  margin-left: 4px;
+  font:
+    700 15px 'Sora',
+    'Space Grotesk',
+    sans-serif;
+  color: #eef6ff;
+}
+.nova-extra__item b.is-bad,
+.nova-mini strong.is-bad {
+  color: #ff8f9a;
+}
+.nova-extra-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.nova-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 11px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(136, 187, 230, 0.12);
+}
+.nova-mini span {
+  font:
+    600 13px 'Space Grotesk',
+    sans-serif;
+  color: #dfeaf7;
+}
+.nova-mini strong {
+  font:
+    700 22px 'Sora',
+    'Space Grotesk',
+    sans-serif;
+  color: #eef6ff;
+  letter-spacing: -0.01em;
+}
+.nova-mini small {
+  font-size: 12px;
+  color: #93abc7;
+}
+.nova-extra__note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: #8ea6c2;
+}
+@media (max-width: 1300px) {
+  .nova-extra-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 3. Sky around the site (2D panorama,js/ui/horizon-2d.js) + compact bars + scrubber */
+.nova-card.nova-time-card {
+  padding: 18px 20px;
+}
+.nova-h2d {
+  margin: 0 -6px 6px;
+  overflow-x: auto;
+}
+.nova-h2d .h2d {
+  display: block;
+  width: 100%;
+  min-width: 560px;
+  height: auto;
+}
+.h2d-axis {
+  fill: #8ea6c2;
+  font:
+    14px 'IBM Plex Mono',
+    monospace;
+}
+.h2d-dir {
+  fill: #d4e3f3;
+  font-weight: 600;
+}
+.h2d-mark {
+  font:
+    700 17px 'Space Grotesk',
+    sans-serif;
+  paint-order: stroke;
+  stroke: #08111f;
+  stroke-width: 4px;
+}
+.nova-time-card .timeline--compact {
+  padding: 0;
+}
+.nova-time-card .track {
+  grid-template-columns: 70px minmax(0, 1fr);
+  gap: 10px;
+  margin: 6px 0;
+}
+.nova-time-card .track-name {
+  font:
+    600 13px 'Space Grotesk',
+    sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--d-text);
+}
+.nova-time-card .track-bar {
+  height: 10px;
+  border-radius: 99px;
+}
+.nova-time-card .time-control {
+  margin-top: 8px;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(136, 187, 230, 0.12);
+}
+.nova-time-card .time-label {
+  font:
+    500 13px 'IBM Plex Mono',
+    monospace;
+  color: #c9d9ea;
+}
+.nova-time-card .btn {
+  font-size: 14px;
+  padding: 9px 14px;
+}
+
+/* 4. Instant readings: one row of compact tiles with a status chip */
+.nova-data .nova-section-label strong {
+  font:
+    700 16px 'Sora',
+    'Space Grotesk',
+    sans-serif;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--d-text);
+}
+.nova-data .kpis {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.nova-data .kpi {
+  min-height: 0;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.nova-data .kpi::before,
+.nova-data .kpi::after {
+  display: none;
+}
+.nova-data .kpi .label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font:
+    600 14px 'Space Grotesk',
+    sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--d-text);
+}
+.nova-data .kpi-icon {
+  font-size: 15px;
+}
+.nova-data .kpi-state {
+  margin-left: auto;
+  padding: 2px 9px;
+  border-radius: 99px;
+  font:
+    600 12px 'Space Grotesk',
+    sans-serif;
+  border: 1px solid currentColor;
+}
+.nova-data .kpi-state.is-on {
+  color: #7fe8bf;
+  background: rgba(127, 232, 191, 0.1);
+}
+.nova-data .kpi-state.is-off {
+  color: #ff9a8a;
+  background: rgba(255, 154, 138, 0.08);
+}
+.nova-data .kpi strong {
+  margin: 2px 0 0;
+  font:
+    700 clamp(20px, 1.9vw, 26px) 'Sora',
+    'Space Grotesk',
+    sans-serif;
+  letter-spacing: -0.02em;
+}
+.nova-data .kpi small {
+  font-size: 12px;
+  color: var(--d-muted);
+}
+
+/* 5. More tools */
+.nova-data .nova-workspace-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.nova-data .nova-launcher strong {
+  font-size: 15px;
+}
+.nova-data .nova-launcher small {
+  font:
+    13px 'Space Grotesk',
+    sans-serif;
+  letter-spacing: 0;
+  color: var(--d-muted);
+}
+
+/* "Link to Earth" 3D panel: status box (js/ui/render.js renderComms) */
+.comms-hud {
+  position: absolute;
+  z-index: 3;
+  left: 10px;
+  right: 10px;
+  bottom: 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 7px 11px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 125, 137, 0.45);
+  background: rgba(6, 11, 22, 0.82);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+.comms-hud.is-ok {
+  border-color: rgba(92, 224, 174, 0.5);
+}
+.comms-hud__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+.comms-hud__state {
+  font:
+    700 14px 'Sora',
+    'Space Grotesk',
+    sans-serif;
+  color: #ff9aa4;
+  white-space: nowrap;
+}
+.comms-hud.is-ok .comms-hud__state {
+  color: #7fe8bf;
+}
+.comms-hud__detail {
+  font:
+    500 13px 'Space Grotesk',
+    sans-serif;
+  color: #e6eef8;
+}
+.comms-hud__stations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.comms-hud__stations span {
+  padding: 2px 8px;
+  border-radius: 99px;
+  border: 1px solid rgba(160, 176, 198, 0.35);
+  font:
+    500 12px 'IBM Plex Mono',
+    monospace;
+  color: #9fb0c6;
+}
+.comms-hud__stations span.is-on {
+  border-color: rgba(92, 224, 174, 0.55);
+  color: #7fe8bf;
+}
+.comms-hud__window {
+  margin-left: auto;
+  font:
+    500 12px 'Space Grotesk',
+    sans-serif;
+  color: #93abc7;
+}
+
+/* Left column: all the height for the two 3D views. Panel headers and legends are hidden (the view title is
+   the label on the image) and the local sky gets 60% of the height. */
+.nova-observatory .visual-grid {
+  grid-template-rows: minmax(0, 3fr) minmax(0, 2fr);
+}
+.nova-observatory .visual-grid > .panel > .panel-head {
+  display: none;
+}
+.nova-observatory .scene-label {
+  font:
+    700 13px 'Sora',
+    'Space Grotesk',
+    sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #eef6ff;
+}
+/* Soft vignette over the local sky (js/ui/scenes-3d.js) */
+.scene-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+}
+/* ⤢ full-screen button (js/workspace-controller.js) */
+.nova-expand {
+  position: absolute;
+  z-index: 4;
+  right: 10px;
+  bottom: 10px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(139, 197, 235, 0.35);
+  border-radius: 10px;
+  background: rgba(5, 12, 23, 0.78);
+  color: #dcefff;
+  font-size: 18px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+}
+.nova-expand:hover {
+  border-color: #8adfff;
+  color: #fff;
+}
+.nova-expand:focus-visible {
+  outline: 2px solid #8bdfff;
+  outline-offset: 2px;
+}
+.nova-observatory .visual-grid > .panel.is-expanded {
+  position: fixed;
+  z-index: 1000;
+  inset: 14px;
+  border-radius: 20px;
+}
+body.nova-view-expanded {
+  overflow: hidden;
+}
+body.nova-view-expanded .nova-observatory {
+  z-index: 1000;
+} /* the sticky column is its own layer: lift it above the top bar */
+/* Header data switch (js/data/spice-bridge.js): Demo <-> Real · SPICE */
+.top-actions #spiceConnect.spice-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 0;
+  padding: 6px 14px;
+  border: 1px solid rgba(136, 187, 230, 0.3);
+  border-radius: 999px;
+  background: rgba(24, 18, 38, 0.82);
+  color: #8ea6c2;
+  font:
+    600 13px 'Space Grotesk',
+    sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+}
+.spice-switch {
+  position: relative;
+  width: 38px;
+  height: 21px;
+  border-radius: 999px;
+  background: rgba(255, 198, 109, 0.25);
+  border: 1px solid rgba(255, 198, 109, 0.55);
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.spice-switch i {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #ffc66d;
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+.spice-toggle[aria-checked='true'] .spice-switch {
+  background: rgba(92, 224, 174, 0.25);
+  border-color: rgba(92, 224, 174, 0.7);
+}
+.spice-toggle[aria-checked='true'] .spice-switch i {
+  transform: translateX(17px);
+  background: #5ce0ae;
+}
+.spice-toggle[aria-checked='false'] .spice-toggle__side--demo,
+.spice-toggle[aria-checked='true'] .spice-toggle__side--real {
+  color: #eef6ff;
+}
+.spice-toggle[aria-checked='true'] .spice-toggle__side--real {
+  color: #7fe8bf;
+}
+.spice-toggle__hint:empty {
+  display: none;
+}
+.spice-toggle__hint {
+  font-size: 12px;
+  color: #ffcf7a;
+}
+.spice-toggle.is-offline .spice-switch {
+  opacity: 0.45;
+}
+.spice-toggle.is-offline .spice-toggle__side--real {
+  text-decoration: line-through;
+  text-decoration-color: rgba(255, 207, 122, 0.6);
+}
+.top-actions #spiceConnect.spice-toggle:hover {
+  border-color: rgba(138, 223, 255, 0.55);
+}
+.spice-toggle:disabled {
+  cursor: wait;
+  opacity: 0.85;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spice-switch,
+  .spice-switch i {
+    transition: none;
+  }
+}
+#dataBadge[hidden] {
+  display: none !important;
+} /* replaced by the data button; kept in the DOM for updateDataBadge() */
+.top-actions #spiceConnect.spice-toggle:focus-visible {
+  outline: 2px solid #8bdfff;
+  outline-offset: 2px;
+}
+
+/* Views (overlays): one title only,readable subtitle and back button */
+.nova-view-overline {
+  display: none;
+}
+.nova-view-header p {
+  font-size: 13px;
+  color: #93abc7;
+}
+.nova-close {
+  font:
+    700 12px 'Space Grotesk',
+    sans-serif !important;
+  letter-spacing: 0.02em;
+}
+#compare > .panel-head {
+  display: none;
+}
+#compare .compare-toolbar strong {
+  font-size: 16px;
+}
+.compare-slot--empty span {
+  font:
+    600 14px 'Space Grotesk',
+    sans-serif;
+  color: #8ea6c2;
+}
+
+/* Left column: make the labels of the 3D views readable */
+.nova-observatory .visual-grid .panel-head h3 {
+  font-size: 12px;
+}
+.nova-observatory .visual-grid .panel-head small {
+  font-size: 11px;
+}
+
+@media (max-width: 1300px) {
+  .nova-data .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 1100px) {
+  .nova-summary-grid {
+    grid-template-columns: 1fr;
+  }
+  .nova-stat {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    column-gap: 12px;
+  }
+  .nova-stat .nova-meter,
+  .nova-stat-next,
+  .nova-stat-sub {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 700px) {
+  .nova-scenario-grid,
+  .nova-more-body {
+    grid-template-columns: 1fr;
+  }
+  .nova-card,
+  .nova-card.nova-time-card {
+    padding: 15px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nova-meter i {
+    transition: none;
+  }
+}
+
+/* "Follow the Sun" option in More options → Solar panel */
+.check-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-top: 6px;
+  font:
+    600 13px 'Space Grotesk',
+    sans-serif;
+  color: #dfeaf7;
+  cursor: pointer;
+}
+.check-field input {
+  width: 16px;
+  height: 16px;
+  accent-color: #8adfff;
+}
+.check-field small {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: #93abc7;
+  font-weight: 500;
+}
+.nova-more-group input:disabled {
+  opacity: 0.45;
+}

@@ -1,0 +1,237 @@
+/* Purple presentation theme */
+/* ------------------------------------------------------------------
+   LUNARA PRESENTATION REFRESH
+   Presentation layer only: preserves existing calculation and control IDs.
+   ------------------------------------------------------------------ */
+:root {
+  --bg: #080711;
+  --panel: #151020;
+  --panel2: #1d1630;
+  --panel3: #100b1b;
+  --line: rgba(189, 160, 232, 0.17);
+  --text: #f5f0fb;
+  --muted: #a99bb9;
+  --soft: #d9cde7;
+  --cyan: #8cdcff;
+  --blue: #8d9fff;
+  --purple: #bd9bff;
+  --amber: #ffd17e;
+  --green: #83e6bf;
+  --red: #ff879e;
+  --radius: 19px;
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.34), 0 1px 0 rgba(255, 255, 255, 0.025) inset;
+}
+
+.brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-self: auto;
+  grid-column: auto;
+  text-align: left;
+}
+.brand:before {
+  content: '';
+  width: 43px;
+  height: 43px;
+  flex: 0 0 43px;
+  border-radius: 50%;
+  display: block;
+  background: radial-gradient(circle at 31% 28%, rgba(255, 255, 255, 0.9) 0 1px, transparent 2px),
+    radial-gradient(circle at 68% 65%, rgba(30, 20, 45, 0.72) 0 4px, transparent 5px),
+    radial-gradient(circle at 38% 36%, #e9e2ee 0%, #b2a9c0 39%, #62576f 71%, #272033 100%);
+  box-shadow:
+    0 0 0 1px rgba(228, 209, 255, 0.22),
+    0 0 26px rgba(185, 151, 255, 0.22),
+    inset -8px -7px 14px rgba(0, 0, 0, 0.36);
+  position: relative;
+}
+.brand:after {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  width: 53px;
+  height: 53px;
+  border: 1px solid rgba(196, 169, 255, 0.38);
+  border-radius: 50%;
+  transform: rotate(-23deg) scaleY(0.39);
+  pointer-events: none;
+}
+.brand-content {
+  align-items: flex-start;
+}
+
+.brand p {
+  text-align: left;
+  margin-top: 3px;
+}
+.top-actions {
+  grid-column: auto;
+  justify-self: auto;
+  justify-content: flex-end;
+}
+
+.status-pill {
+  padding: 8px 12px;
+}
+.status-pill .dot {
+  background: var(--amber);
+}
+.status-pill.real .dot {
+  background: var(--green);
+}
+
+.panel-head h3 {
+  font-weight: 800;
+}
+
+.field input:focus,
+.field select:focus {
+  background: #100b1e;
+}
+
+.btn:focus-visible {
+  outline: 2px solid #d8bdff;
+  outline-offset: 2px;
+}
+
+.btn.primary:hover {
+  filter: brightness(1.16);
+}
+
+.status-note {
+  border-color: rgba(189, 160, 232, 0.15);
+}
+
+.scene-label {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+}
+.scene-status {
+  border-radius: 7px;
+}
+.scene-help {
+  font-size: 9px;
+}
+
+.flag {
+  font-size: 8px;
+}
+
+.chart-legend {
+  font-size: 9px;
+}
+
+.track-name {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.time-label {
+  font-size: 9px;
+}
+
+.data-table {
+  font-size: 10px;
+}
+
+.tech-item strong {
+  font-size: 10px;
+  letter-spacing: 0.035em;
+}
+
+@media (max-width: 1120px) {
+  .grid {
+    grid-template-columns: minmax(270px, 300px) minmax(0, 1fr);
+  }
+  #science .technical {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 850px) {
+  .topbar {
+    align-items: flex-start;
+  }
+  .top-actions {
+    max-width: 55%;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  #workspace aside.panel {
+    position: relative;
+    top: auto;
+    max-height: none;
+    overflow: visible;
+  }
+}
+@media (max-width: 620px) {
+  .app {
+    padding: 13px 11px 30px;
+  }
+  .topbar {
+    flex-direction: column;
+    align-items: center;
+    gap: 13px;
+  }
+  .brand {
+    align-self: center;
+  }
+  .brand-content {
+    align-items: center;
+  }
+  .brand p {
+    text-align: center;
+  }
+  .top-actions {
+    max-width: 100%;
+    justify-content: center;
+  }
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .kpi {
+    min-height: 100px;
+    padding: 13px;
+  }
+  .metrics-row,
+  .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+  .scene-wrap {
+    height: 280px;
+  }
+  .search-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .search-results {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #science .technical {
+    grid-template-columns: 1fr;
+  }
+  .panel-head {
+    padding: 14px 15px 12px;
+  }
+  .panel-body {
+    padding: 14px;
+  }
+}
+@media (max-width: 390px) {
+  .search-results {
+    grid-template-columns: 1fr;
+  }
+  .time-control {
+    grid-template-columns: 1fr auto;
+  }
+  .time-control button {
+    grid-column: 2;
+  }
+  .time-label {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+}

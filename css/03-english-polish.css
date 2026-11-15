@@ -1,0 +1,109 @@
+/* Typography polish */
+:root {
+  --font-ui: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-display: 'Sora', 'Space Grotesk', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-brand: 'Orbitron', 'Sora', sans-serif;
+}
+body,
+button,
+input,
+select {
+  font-family: var(--font-ui);
+}
+
+h1,
+h2,
+h3,
+.panel-head h3 {
+  font-family: var(--font-display);
+}
+.lunara-logo {
+  font-family: var(--font-brand);
+  font-weight: 700;
+}
+
+.brand:before,
+.brand:after {
+  display: none !important;
+  content: none !important;
+}
+.lunara-emblem {
+  flex: 0 0 56px;
+  overflow: visible;
+}
+.emblem-orbit {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.emblem-orbit-a {
+  animation: lunara-orbit 22s linear infinite;
+}
+.emblem-orbit-b {
+  animation: lunara-orbit 30s linear infinite reverse;
+  opacity: 0.7;
+}
+@keyframes lunara-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.brand-mark {
+  color: #9fddff;
+  font-size: 0.62em;
+  letter-spacing: 0.04em;
+  vertical-align: top;
+  opacity: 0.82;
+}
+.brand p {
+  font-family: var(--font-mono);
+}
+.brand p i {
+  font-style: normal;
+}
+.kpi .label,
+.panel-head small,
+.metric-title strong,
+.track-name,
+.flag {
+  font-family: var(--font-mono);
+}
+.kpi strong,
+.big-reading,
+.time-label {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+.field label {
+  font-family: var(--font-ui);
+}
+.btn {
+  font-family: var(--font-ui);
+}
+.scene-label,
+.scene-status,
+.scene-help {
+  font-family: var(--font-mono);
+}
+.tech-item strong {
+  font-family: var(--font-display);
+}
+.tech-item p {
+  font-family: var(--font-ui);
+}
+.footer {
+  font-family: var(--font-mono);
+}
+@media (max-width: 850px) {
+  .lunara-emblem {
+    width: 50px;
+    height: 50px;
+    flex-basis: 50px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .emblem-orbit-a,
+  .emblem-orbit-b {
+    animation: none;
+  }
+}

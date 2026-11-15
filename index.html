@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="LUNARA Mission Planner — compare lunar south pole lighting conditions and geometric Earth visibility.">
+<title>LUNARA · Lunar Mission Intelligence</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/build/three.module.js",
+    "three/addons/": "./vendor/three/examples/jsm/"
+  }
+}
+</script>
+<link rel="stylesheet" href="css/01-base.css">
+
+<link rel="stylesheet" href="css/02-presentation-refresh.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+
+<link rel="stylesheet" href="css/03-english-polish.css">
+
+
+
+<link rel="stylesheet" href="css/04-space-apps-edition.css">
+
+
+<link rel="stylesheet" href="css/05-intro.css">
+
+
+<link rel="stylesheet" href="css/06-orbital-command.css">
+
+
+<link rel="stylesheet" href="css/07-spice-bridge.css">
+
+
+<link rel="stylesheet" href="css/08-observatory.css">
+
+
+<link rel="stylesheet" href="css/09-comparison-studio.css">
+<link rel="stylesheet" href="css/10-data-panel.css">
+<link rel="stylesheet" href="css/11-compare.css">
+<link rel="stylesheet" href="css/12-readability.css">
+
+</head>
+<body>
+<div class="cosmic-atmosphere" aria-hidden="true"><div class="cosmic-nebula"></div><div class="cosmic-stars cosmic-stars--near"></div><div class="cosmic-stars cosmic-stars--far"></div><div class="cosmic-orbit-grid"></div><div class="cosmic-light-sweep"></div></div>
+<div class="lunara-intro" id="lunaraIntro" role="dialog" aria-modal="true" aria-label="LUNARA opening sequence">
+  <button class="lunara-intro__skip" id="lunaraIntroSkip" type="button">Skip intro <span>↗</span></button>
+  <div class="lunara-intro__center">
+    <div class="lunara-intro__orbital-stage" aria-hidden="true">
+      <div class="lunara-intro__orbit"><i class="lunara-intro__orbit-dot"></i></div>
+      <div class="lunara-intro__orbit lunara-intro__orbit--inner"><i class="lunara-intro__orbit-dot"></i></div>
+      <div class="lunara-intro__moon"></div>
+      <div class="lunara-intro__star"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M32 2.5 40.3 23.7 61.5 32 40.3 40.3 32 61.5 23.7 40.3 2.5 32 23.7 23.7 32 2.5Z" fill="currentColor"/><circle cx="32" cy="32" r="4" fill="#fff"/></svg></div>
+    </div>
+    <h1 class="lunara-intro__wordmark">LUNARA</h1>
+    <p class="lunara-intro__subtitle">Lunar south pole · Mission intelligence</p>
+    <p class="lunara-intro__manifesto">Explore the light. Find the window. Make the landing count.</p>
+    <div class="lunara-intro__loader"><i></i></div>
+    <p class="lunara-intro__loading-label">Initializing lunar environment</p>
+  </div>
+  <div class="lunara-intro__corner lunara-intro__corner--left">MISSION SYSTEM / LNR-01<br>GEOMETRY · LIGHT · VISIBILITY</div>
+  <div class="lunara-intro__corner lunara-intro__corner--right">LUNAR OPERATIONS<br>READY FOR EXPLORATION</div>
+</div>
+<!-- Page layout. Left: the two 3D views. Right: data column. Overlay: focused views (telemetry, compare, explorer, limitations).
+     Behaviour (open/close views, full screen, play dock): js/workspace-controller.js -->
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <svg class="lunara-emblem" viewBox="0 0 72 72" role="img" aria-label="LUNARA lunar-orbit emblem">
+        <defs>
+          <radialGradient id="moonMetal" cx="30%" cy="26%" r="78%">
+            <stop offset="0" stop-color="#f6f0ff"></stop>
+            <stop offset=".34" stop-color="#bdb2d4"></stop>
+            <stop offset=".72" stop-color="#655a78"></stop>
+            <stop offset="1" stop-color="#292238"></stop>
+          </radialGradient>
+          <linearGradient id="orbitGlow" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#a8e8ff"></stop>
+            <stop offset=".52" stop-color="#c6a1ff"></stop>
+            <stop offset="1" stop-color="#f8d18b"></stop>
+          </linearGradient>
+          <clipPath id="moonClip"><circle cx="34" cy="35" r="17"></circle></clipPath>
+        </defs>
+        <ellipse class="emblem-orbit emblem-orbit-a" cx="36" cy="36" rx="31" ry="13" fill="none" stroke="url(#orbitGlow)" stroke-width="1.35" transform="rotate(-31 36 36)"></ellipse>
+        <ellipse class="emblem-orbit emblem-orbit-b" cx="36" cy="36" rx="27" ry="10" fill="none" stroke="#d6c4f5" stroke-opacity=".5" stroke-width=".8" transform="rotate(53 36 36)"></ellipse>
+        <circle cx="34" cy="35" r="17" fill="url(#moonMetal)" stroke="#f0e6ff" stroke-opacity=".72" stroke-width=".8"></circle>
+        <g clip-path="url(#moonClip)" fill="#342b45" opacity=".46">
+          <circle cx="26" cy="28" r="4.1"></circle><circle cx="41" cy="42" r="5.2"></circle><circle cx="44" cy="27" r="2.2"></circle><circle cx="28" cy="44" r="2.5"></circle>
+        </g>
+        <path d="M50 15 L54 7 L58 15 L66 19 L58 23 L54 31 L50 23 L42 19Z" fill="#fff1d0" opacity=".95"></path>
+        <circle cx="9.5" cy="52" r="3.1" fill="#9de5ff" stroke="#e8f8ff" stroke-width=".8"></circle>
+        <path d="M10 52 Q20 62 34 57" fill="none" stroke="#a9ddff" stroke-width="1" stroke-dasharray="2.4 3.2" opacity=".8"></path>
+      </svg>
+      <div class="brand-content">
+        <h1 class="lunara-logo">LUNARA<span class="brand-mark"> // </span></h1>
+        <p>LUNAR SOUTH POLE <i>·</i> MISSION INTELLIGENCE</p>
+      </div>
+    </div>
+    <div class="top-actions"><button type="button" id="spiceConnect" class="spice-toggle is-checking" role="switch" aria-checked="false" aria-label="Use real SPICE data"><span class="spice-toggle__side spice-toggle__side--demo">Demo</span><span class="spice-switch" aria-hidden="true"><i></i></span><span class="spice-toggle__side spice-toggle__side--real">Real · SPICE</span><span class="spice-toggle__hint"></span></button><span id="dataBadge" class="status-pill" hidden=""><i class="dot"></i><span id="dataBadgeText">DEMO MODE · SYNTHETIC DATA</span></span><button class="btn small ghost" id="exportJson">Export mission report ↗</button></div>
+  </header>
+
+
+
+  <div class="nova-grid" id="workspace"><section class="nova-observatory" aria-label="Persistent 3D lunar observatory"><div class="visual-grid" id="visuals">
+        <section class="panel"><div class="scene-wrap" id="skyScene"><div class="scene-label">Local sky</div><div class="scene-status" id="skyStatus">Awaiting analysis</div><div class="scene-help">Drag to rotate · scroll to zoom</div><button type="button" class="nova-expand" aria-label="Expand to full screen" title="Full screen">⤢</button><div class="sky-play"><button type="button" class="sky-play__btn" aria-label="Play">▶</button><span class="sky-play__time">—</span></div></div></section>
+        <section class="panel"><div class="scene-wrap" id="moonScene"><div class="scene-label">Link to Earth</div><div class="scene-status" id="moonStatus">—</div><div class="scene-help">Drag to orbit · not to scale</div><div class="comms-hud" id="commsHud" aria-live="polite"><div class="comms-hud__row"><span class="comms-hud__state" id="commsState">—</span><span class="comms-hud__detail" id="commsDetail">—</span></div><div class="comms-hud__row"><span class="comms-hud__stations" id="commsStations"></span><span class="comms-hud__window" id="commsWindow">—</span></div></div><button type="button" class="nova-expand" aria-label="Expand to full screen" title="Full screen">⤢</button></div></section>
+      </div></section><main class="nova-command nova-data"><section class="nova-card nova-scenario">
+    <div class="nova-card-head"><h2>Scenario</h2>
+      <div class="nova-card-actions"><button type="button" class="btn ghost small" id="mainAddCompare">＋ Add to comparison</button><button type="button" class="btn primary small" data-open-view="comparison">⇄ Compare <span id="compareBadge">0/4</span></button></div>
+    </div>
+    <div class="nova-scenario-grid"><div class="field"><label for="preset">Landing site</label><select id="preset">
+          <optgroup label="South pole · real terrain (LOLA)">
+            <option value="shackleton" selected="">Shackleton region</option>
+            <option value="shackletonFloor">Shackleton crater floor</option>
+            <option value="siteA">South pole site A</option>
+            <option value="siteB">South pole site B</option>
+          </optgroup>
+          <optgroup label="Other references · flat horizon">
+            <option value="apollo">Apollo 11</option>
+            <option value="huygens">Mount Huygens</option>
+            <option value="marius">Marius Hills</option>
+          </optgroup>
+          <option value="custom">Custom coordinates</option>
+        </select></div><div class="field"><label for="date">Start (UTC)</label><input id="date" type="datetime-local" value="2026-11-10T12:00" step="60"></div><div class="field field--range"><label for="endDate">End (UTC)</label><input id="endDate" type="datetime-local" value="2026-12-10T12:00" step="60">
+          <input id="duration" type="hidden" value="720">
+          <input id="sampleStep" type="hidden" value="60"><!-- time step in minutes, set automatically from the window length --><!-- window length in hours, derived from start/end (js/app/controls.js) -->
+          <div class="range-chips" role="group" aria-label="Quick window length"><button type="button" data-range-days="1">1 d</button><button type="button" data-range-days="3">3 d</button><button type="button" data-range-days="7">7 d</button><button type="button" data-range-days="30">30 d</button><button type="button" data-range-days="90">90 d</button><button type="button" data-range-days="365">1 yr</button></div>
+        </div></div>
+    <details class="nova-more">
+      <summary><span class="nova-coordinate-tag">89.50°S · 0.00°E</span><span class="nova-more-toggle">More options</span></summary>
+      <div class="nova-more-body">
+        <section class="nova-more-group" data-group="site"><h3>Site coordinates</h3><div class="field"><label for="siteName">Scenario name</label><input id="siteName" value="Shackleton region" maxlength="50"></div><div class="field-row">
+          <div class="field"><label for="lat">Latitude (°)</label><input id="lat" type="number" min="-90" max="90" step="0.001" value="-89.5"></div>
+          <div class="field"><label for="lon">Longitude (°E)</label><input id="lon" type="number" min="-180" max="180" step="0.001" value="0"></div>
+        </div><div class="field"><label for="alt">Altitude (km)</label><input id="alt" type="number" min="-5" max="15" step="0.001" value="0"></div></section>
+        <section class="nova-more-group" data-group="panel"><h3>Solar panel</h3><div class="field-row">
+          <div class="field"><label for="tilt">Panel tilt (°)</label><input id="tilt" type="number" min="0" max="90" value="90" step="1"></div>
+          <div class="field"><label for="panelAz">Panel azimuth (°)</label><input id="panelAz" type="number" min="0" max="359" value="0" step="1"></div>
+        </div><div class="field"><label for="efficiency">Panel efficiency (%)</label><input id="efficiency" type="number" min="1" max="50" value="29" step="1"></div><label class="check-field"><input id="panelTrack" type="checkbox" checked> Follow the Sun <small>the panel turns to face the Sun; tilt 0° = flat, 90° = vertical</small></label></section>
+        <section class="nova-more-group" data-group="comms"><h3>Communications</h3>
+          <div class="field-row">
+            <div class="field"><label for="commsBand">Band</label><select id="commsBand"><option value="S">S · 2.2 GHz</option><option value="X" selected="">X · 8.4 GHz</option><option value="Ka">Ka · 32 GHz</option></select></div>
+            <div class="field"><label for="commsDish">DSN antenna</label><select id="commsDish"><option value="34" selected="">34 m</option><option value="70">70 m</option></select></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="commsPower">Lander power (W)</label><input id="commsPower" type="number" min="0.1" max="500" step="0.1" value="10"></div>
+            <div class="field"><label for="commsGain">Lander antenna (dBi)</label><input id="commsGain" type="number" min="-5" max="45" step="0.5" value="10"></div>
+          </div>
+          <div class="field-note">Downlink lander → DSN, theoretical maximum data rate.</div>
+        </section>
+        <section class="nova-more-group nova-more-group--wide" data-group="data"><h3>Data source</h3><div class="spice-bridge" id="spiceBridge">
+          
+          <div class="spice-bridge__copy">Real Sun and Earth positions from the local SPICE server. Switch with the data button in the top bar.</div>
+          
+          <div id="spiceServiceStatus" class="status-note warn" aria-live="polite">Checking local SPICE service…</div>
+        </div><div class="field"><label class="file-label btn ghost full">⇧ Load positions.json (SPICE)<input id="dataFile" type="file" accept=".json,application/json"></label></div><div class="field"><label class="file-label btn ghost full">⇧ Load local horizon CSV<input id="horizonFile" type="file" accept=".csv,text/csv"></label></div><div class="btn-row"><button class="btn small ghost" id="downloadHorizonTemplate">CSV template</button><button class="btn small ghost" id="resetDemo">Reset to demo</button></div><div id="dataMessage" class="status-note warn">Demo mode: synthetic values are only for exploring the interface. Connect the local SPICE engine below or load a SPICE-generated positions.json file for real ephemerides.</div><div id="terrainMessage" class="status-note">Horizon: flat local horizon (0°). No LOLA/DEM profiles or terrain obstructions are loaded.</div></section>
+      </div>
+    </details></section><section class="nova-card nova-summary">
+    <div class="nova-card-head"><h2>Over the whole window</h2><span class="nova-card-note" id="winRange"></span></div>
+    <div class="nova-summary-grid">
+      <div class="nova-stat nova-stat--sun"><span class="nova-stat-label">☀ Sun visible</span><strong id="winSun">—</strong><span class="nova-stat-sub" id="winSunPct">—</span><div class="nova-meter"><i id="winSunBar"></i></div><span class="nova-stat-next" id="winSunNext">—</span></div>
+      <div class="nova-stat nova-stat--earth"><span class="nova-stat-label">◉ Earth in view</span><strong id="winEarth">—</strong><span class="nova-stat-sub" id="winEarthPct">—</span><div class="nova-meter"><i id="winEarthBar"></i></div><span class="nova-stat-next" id="winEarthNext">—</span></div>
+      <div class="nova-stat nova-stat--power"><span class="nova-stat-label">⚡ Solar energy</span><strong id="winPower">—</strong><span class="nova-stat-sub" id="winPowerSub">—</span><div class="nova-meter"><i id="winPowerBar"></i></div><span class="nova-stat-next" id="winPowerNext">—</span></div>
+    </div>
+    <details class="nova-extra">
+      <summary>
+        <span class="nova-extra__item">🌑 Longest night <b id="winNightShort">—</b></span>
+        <span class="nova-extra__item">📡 Longest without contact <b id="winNoLinkShort">—</b></span>
+        <span class="nova-more-toggle">Details</span>
+      </summary>
+      <div class="nova-extra-grid">
+        <div class="nova-mini"><span>🌑 Longest night</span><strong id="winNight">—</strong><small id="winNightSub">without direct sunlight</small></div>
+        <div class="nova-mini"><span>📡 Longest without contact</span><strong id="winNoLink">—</strong><small>no direct link to Earth (DSN)</small></div>
+        <div class="nova-mini"><span>☀◉ Sun + Earth together</span><strong id="winSunEarth">—</strong><small id="winSunEarthSub">—</small></div>
+        <div class="nova-mini"><span>☀ Longest continuous sun</span><strong id="winLongDay">—</strong><small>longest single sunlit period</small></div>
+      </div>
+      <p class="nova-extra__note">“≥” means the period touches the start or end of the window, so it may be longer.</p>
+    </details></section><section class="nova-card nova-time-card"><div class="nova-card-head"><h2>Sky around the site</h2><span class="nova-card-note">Faded dots = hidden</span></div>
+    <div class="nova-h2d" id="horizon2d"></div><div class="timeline timeline--compact" id="timeline"><div class="track"><span class="track-name">Sun</span><div class="track-bar"></div></div><div class="track"><span class="track-name">Earth</span><div class="track-bar"></div></div></div><div class="time-control"><input id="timeSlider" type="range" min="0" max="100" value="0"><span class="time-label" id="timeReadout">—</span><button id="play" class="btn small ghost">▶ Play</button></div></section><div class="nova-section-label"><strong>At the selected time</strong></div><div class="kpis">
+        <div class="kpi kpi--sun"><div class="label"><span class="kpi-icon">☀</span>Sun<span class="kpi-state" id="kpiSunState">—</span></div><strong class="sun-text" id="kpiSun">—</strong><small id="kpiSunSub">elevation at selected time</small></div>
+        <div class="kpi kpi--earth"><div class="label"><span class="kpi-icon">◉</span>Earth<span class="kpi-state" id="kpiEarthState">—</span></div><strong class="earth-text" id="kpiEarth">—</strong><small id="kpiEarthSub">geometric disk visibility</small></div>
+        <div class="kpi kpi--power"><div class="label"><span class="kpi-icon">⚡</span>Solar power</div><strong class="green-text" id="kpiPower">—</strong><small id="kpiPowerSub">estimated power per m²</small></div>
+        <div class="kpi kpi--delay"><div class="label"><span class="kpi-icon">📡</span>Radio delay</div><strong id="kpiDelay">—</strong><small>round trip to Earth</small></div>
+      </div><section class="nova-workspaces">
+    <div class="nova-section-label"><strong>More tools</strong></div>
+    <div class="nova-workspace-grid">
+      <button class="nova-launcher" type="button" data-open-view="telemetry"><span class="nova-launcher-icon">⌁</span><span class="nova-launcher-copy"><strong>Detailed telemetry</strong><small>Elevation chart · exact angles</small></span><span class="nova-launcher-arrow">↗</span></button>
+      <button class="nova-launcher" type="button" data-open-view="explorer"><span class="nova-launcher-icon">⌖</span><span class="nova-launcher-copy"><strong>Find sites</strong><small>Search candidate locations</small></span><span class="nova-launcher-arrow">↗</span></button>
+      <button class="nova-launcher" type="button" data-open-view="surface"><span class="nova-launcher-icon">◍</span><span class="nova-launcher-copy"><strong>Surface map</strong><small>Sunlight and Earth view over the south pole</small></span><span class="nova-launcher-arrow">↗</span></button>
+      <button class="nova-launcher" type="button" data-open-view="science"><span class="nova-launcher-icon">∿</span><span class="nova-launcher-copy"><strong>Limitations</strong><small>Data sources · assumptions</small></span><span class="nova-launcher-arrow">↗</span></button>
+    </div></section></main></div>
+  <div class="footer">LUNARA · Lunar mission planning prototype · Not a certified flight engineering system.</div>
+<div class="nova-view-overlay" id="novaViewOverlay" aria-hidden="true" role="presentation"><div class="nova-view-host" style="display: flex; flex: 1 1 0%; min-width: 0px; min-height: 0px; width: 100%; height: 100%;"><section class="nova-view" data-view="telemetry"><header class="nova-view-header"><div><div class="nova-view-overline">LUNARA / WORKSPACE</div><h2>Mission telemetry</h2><p>Inspect solar and Earth geometry, elevation curves and opportunity windows.</p></div><button type="button" class="nova-close"><span>←</span> BACK TO OBSERVATORY</button></header><div class="nova-view-scroll"><div class="mission-foldout__content">
+      <div class="metrics-row">
+        <section class="metric-card"><div class="metric-title"><strong class="sun-text">☼ SOLAR ENVIRONMENT</strong><span id="sunFlag" class="flag neutral">No data</span></div><div class="big-reading" id="sunElevation">—</div><div class="sub-reading">Solar center elevation · azimuth <b id="sunAzimuth">—</b></div><div class="metric-line"><span>Time with solar center visible</span><b id="sunHours">—</b></div><div class="metric-line"><span>Time with solar disk visible</span><b id="sunLimbHours">—</b></div><div class="metric-line"><span>Peak elevation in window</span><b id="sunMax">—</b></div><div class="metric-line"><span>Peak estimated output</span><b id="powerMax">—</b></div><div class="metric-line"><span>Next horizon crossing</span><b id="sunNext">—</b></div></section>
+        <section class="metric-card"><div class="metric-title"><strong class="earth-text">◎ EARTH GEOMETRY</strong><span id="earthFlag" class="flag neutral">No data</span></div><div class="big-reading" id="earthElevation">—</div><div class="sub-reading">Earth center elevation · azimuth <b id="earthAzimuth">—</b></div><div class="metric-line"><span>Earth center visible</span><b id="earthHours">—</b></div><div class="metric-line"><span>Earth disk partially visible</span><b id="earthLimbHours">—</b></div><div class="metric-line"><span>Peak elevation in window</span><b id="earthMax">—</b></div><div class="metric-line"><span>Earth-to-site distance</span><b id="earthDistance">—</b></div><div class="metric-line"><span>Next horizon crossing</span><b id="earthNext">—</b></div></section>
+      </div>
+
+      <section class="panel" style="margin-bottom:15px"><div class="panel-head"><h3>Environment timeline · elevation</h3><small id="chartSubtitle">SELECTED WINDOW · UTC</small></div><div class="chart-box"><canvas id="elevationChart" class="chart-canvas" width="1100" height="290"></canvas><div class="chart-legend"><span><i style="background:#ffc66d"></i> Solar elevation</span><span><i style="background:#55b9ff"></i> Earth elevation</span><span><i style="background:#8090a8"></i> Horizon / terrain profile</span></div></div></section>
+
+      
+        </div></div></section><section class="nova-view" data-view="comparison"><header class="nova-view-header"><div><div class="nova-view-overline">LUNARA / WORKSPACE</div><h2>Compare scenarios</h2><p>Up to four sites or dates side by side.</p></div><button type="button" class="nova-close"><span>←</span> BACK TO OBSERVATORY</button></header><div class="nova-view-scroll"><section class="panel" id="compare">
+  <div class="panel-head"><h3>Mission comparison studio</h3><small>UP TO 4 MISSIONS · INDIVIDUAL 3D VIEWS</small></div>
+  <div class="panel-body compare-main" id="compareMain">
+    <div class="compare-toolbar">
+      <div><strong id="compareCount">0 of 4 missions</strong></div>
+      <div class="btn-row compare-toolbar-actions">
+        <div class="compare-viewmode" role="group" aria-label="Preview type"><button type="button" data-compare-mode="3d" aria-pressed="true">3D</button><button type="button" data-compare-mode="2d" aria-pressed="false">2D</button></div>
+        <button id="comparePlay" class="btn small ghost" type="button" aria-pressed="false">▶ Play</button>
+        <button id="compareAddCurrent" class="btn primary small" type="button">＋ Add current scenario</button>
+        <button id="clearCompare" class="btn small ghost" type="button">Clear all</button>
+        <button id="exportCompare" class="btn small ghost" type="button">Export CSV</button>
+      </div>
+    </div>
+    <div id="compareList" class="compare-cards-grid"><div class="compare-empty compare-empty--studio"><strong>Your comparison board is empty.</strong><span>Analyse a mission, then choose “Add to comparison”. You can keep up to four independent mission runs here.</span></div></div>
+    <section class="compare-charts" id="compareCharts" hidden=""></section>
+    <div class="compare-matrix-wrap">
+      <div class="compare-matrix-title"><strong>Summary</strong></div>
+      <div class="table-wrap"><table class="data-table compare-matrix"><thead><tr><th>Mission</th><th>Site</th><th>Start · UTC</th><th>Sun center / disk</th><th>Earth center / disk</th><th>Longest night</th><th>Without contact</th><th>Peak Sun</th><th>Peak Earth</th><th>Peak array</th><th>Data</th></tr></thead><tbody id="compareTable"><tr><td colspan="11" class="compare-matrix-empty">No missions saved yet.</td></tr></tbody></table></div>
+    </div>
+  </div>
+  <div id="compareMissionDetail" class="compare-detail" hidden=""></div>
+</section></div></section><section class="nova-view" data-view="explorer"><header class="nova-view-header"><div><div class="nova-view-overline">LUNARA / WORKSPACE</div><h2>Polar site explorer</h2><p>Screen candidate locations using the currently loaded ephemeris and geometric filters.</p></div><button type="button" class="nova-close"><span>←</span> BACK TO OBSERVATORY</button></header><div class="nova-view-scroll"><section class="panel" id="explorer"><div class="panel-head"><h3>Candidate explorer</h3><small>POLAR REGION · RAPID SCREENING</small></div><div class="panel-body"><p class="inline-note" style="margin-top:0">Scan a coordinate grid across the polar region and rank candidate sites by geometric conditions. Results inherit the quality and coverage of the loaded dataset.</p><div class="search-controls"><div class="field"><label for="minSun">Sun center visible (h)</label><input id="minSun" type="number" min="0" max="72" value="8"></div><div class="field"><label for="minEarth">Earth disk visible (h)</label><input id="minEarth" type="number" min="0" max="72" value="4"></div><div class="field"><label for="maxLat">Northern latitude limit (°)</label><input id="maxLat" type="number" min="-89" max="-70" value="-85"></div><div class="field"><label for="gridStep">Grid spacing (°)</label><select id="gridStep"><option value="2">2° · fine</option><option value="5" selected="">5° · standard</option><option value="10">10° · fast</option></select></div></div><button id="searchCandidates" class="btn primary full" style="margin-top:10px">⌕ Find candidate sites</button><div id="searchResults" class="search-results"><div class="compare-empty" style="grid-column:1/-1">Run the screening analysis to discover alternatives near the lunar south pole.</div></div></div></section></div></section><section class="nova-view" data-view="surface"><header class="nova-view-header"><div><h2>Surface map</h2><p>Share of time with the Sun or the Earth above the local terrain, over one year.</p></div><button type="button" class="nova-close"><span>←</span> BACK TO OBSERVATORY</button></header><div class="nova-view-scroll"><section class="surface-map" id="surfaceMap">
+  <div class="surface-map__bar">
+    <div class="compare-viewmode" role="group" aria-label="Map layer"><button type="button" data-map-layer="sun" aria-pressed="true">☀ Sunlight</button><button type="button" data-map-layer="earth" aria-pressed="false">◉ Earth in view</button></div>
+    <div class="surface-map__legend"><span id="mapLegendMin">0 %</span><i class="surface-map__scale"></i><span id="mapLegendMax">≥ 60 %</span></div>
+  </div>
+  <div class="surface-map__frame">
+    <img id="mapImage" src="maps/map_sun.png" alt="South polar map of the share of time with sunlight" width="900" height="900">
+    <div class="surface-map__markers" id="mapMarkers"></div>
+    <span class="surface-map__dir surface-map__dir--top">0°E · near side</span><span class="surface-map__dir surface-map__dir--right">90°E</span><span class="surface-map__dir surface-map__dir--bottom">180° · far side</span><span class="surface-map__dir surface-map__dir--left">90°W</span>
+  </div>
+  <div class="surface-map__sites" id="mapSites"></div>
+  <p class="surface-map__note" id="mapNote">South pole from 80°S · LOLA terrain + SPICE positions · 2 km grid: it shows regions; the exact values of a site are in the main view.</p>
+</section></div></section><section class="nova-view" data-view="science"><header class="nova-view-header"><div><div class="nova-view-overline">LUNARA / WORKSPACE</div><h2>Model integrity</h2><p>Understand provenance, assumptions and scientific limitations behind the results.</p></div><button type="button" class="nova-close"><span>←</span> BACK TO OBSERVATORY</button></header><div class="nova-view-scroll"><section class="panel" id="science" style="margin-top:0"><div class="panel-head"><h3>Scientific scope &amp; limitations</h3><small>MODEL TRACEABILITY</small></div><div class="panel-body"><div class="technical"><div class="tech-item"><strong>Ephemeris / geometry</strong><p>With positions.json: Sun and Earth vectors precomputed by SPICE in IAU_MOON. Linear interpolation is performed within dataset coverage; no extrapolation is applied beyond the available range.</p></div><div class="tech-item"><strong>Horizon / terrain</strong><p>Catalog south pole sites use a horizon computed from the LOLA polar DEM (40 m/px, traced 150-200 km with lunar curvature). The surface map uses the same method on a 2 km grid. Other sites use a flat horizon unless a CSV is loaded.</p></div><div class="tech-item"><strong>Communications</strong><p>Direct-to-Earth link: Earth above the site horizon (terrain included) and a DSN complex (Goldstone, Madrid, Canberra) seeing the Moon above 10°, using a low-precision lunar ephemeris (~0.2°). Data rate is an idealised link budget (free-space loss, DSN dish gain, system noise, 3 dB margin). Not modeled: atmosphere/rain fade, pointing and polarization losses, DSN scheduling, relay satellites.</p></div><div class="tech-item"><strong>Power</strong><p>Sunlight on a 1 m² panel with configurable tilt (0° flat, 90° vertical) and efficiency, either following the Sun or fixed at an azimuth; zero when the Sun is behind the panel or hidden by terrain. Energy is integrated over the window (kWh/m²). Not modeled: dust, temperature losses, shadows from the lander itself, batteries and power electronics.</p></div><div class="tech-item"><strong>Thermal environment</strong><p>No falsely precise surface temperature is displayed. A thermal model needs thermal inertia, conductivity, emissivity, albedo, regolith properties and topography.</p></div><div class="tech-item"><strong>Data quality</strong><p>Time resolution and coverage are determined by the loaded file. 3D models in this version are illustrative, not a certified topographic mesh.</p></div></div><div id="scienceNotice" class="status-note warn" style="margin-top:13px">IMPORTANT: demo data must not be used for mission decisions. Load a validated SPICE dataset and a LOLA-derived horizon profile for a more realistic assessment.</div></div></section></div></section></div></div></div>
+
+
+<script src="js/workspace-controller.js"></script>
+
+<!-- Main app: classic deferred scripts, executed in this order after parsing. See js/README.md -->
+<script defer src="js/core/state.js"></script>
+<script defer src="js/core/ephemeris.js"></script>
+<script defer src="js/core/geometry.js"></script>
+<script defer src="js/data/terrain.js"></script>
+<script defer src="js/core/comms.js"></script>
+<script defer src="js/ui/horizon-2d.js"></script>
+<script defer src="js/ui/render.js"></script>
+<script defer src="js/ui/scenes-3d.js"></script>
+<script defer src="js/ui/comparison.js"></script>
+<script defer src="js/data/files.js"></script>
+<script defer src="js/app/controls.js"></script>
+<script defer src="js/data/spice-bridge.js"></script>
+<script defer src="js/ui/surface-map.js"></script>
+<script defer src="js/boot.js"></script>
+
+
+<script src="js/intro.js"></script>
+</body>
+</html>
