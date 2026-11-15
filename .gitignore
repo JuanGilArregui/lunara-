@@ -1,0 +1,6 @@
+# Local LOLA data: 40 m polar map (~460 MB, downloaded by tools/lola_horizon.py --download)
+# and high-resolution GeoTIFFs. Not committed; the app only uses the precomputed horizons/ and maps/.
+data/lola/
+
+# Python cache
+__pycache__/
