@@ -88,6 +88,9 @@ python tools/lola_horizon.py              # writes horizons/<site>.csv
 python tools/lola_map.py                  # writes maps/ (about 2 min)
 ```
 
+To inspect high-resolution LOLA GeoTIFFs: `python -m pip install rasterio numpy matplotlib`, then
+`python inspect_lola_dem.py <file.tif>`.
+
 `data/lola/` is not committed. The steps to add a new site are in [js/README.md](js/README.md).
 
 ## Project structure
@@ -113,3 +116,16 @@ More details: [js/README.md](js/README.md) (front-end) and [README_SPICE.md](REA
 This is a visualization and prototyping tool, not certified for mission decisions. Lunar orientation uses
 `IAU_MOON` (low precision) and Earth visibility is geometric; it does not guarantee an RF link.
 The 3D models are illustrative. The app's **Model integrity** view explains this in detail.
+
+## Team and contributions
+
+All the code was pushed to this repository from a single account. This is who actually built each part:
+
+| Person | GitHub | Contribution |
+|---|---|---|
+| **Sey** | [@seyamacuba](https://github.com/seyamacuba) | Initial app prototype (`index.html`). Python SPICE server (`lunara_spice_server.py`), `.bat` launcher, NAIF kernel selection and `README_SPICE.md`. |
+| **Victor** | [@imVictorVM](https://github.com/imVictorVM) | 3D models and textures (Moon, antenna, solar panel, Sun, Earth, starry sky). 3D scene lighting, solar panel that tracks the Sun and wiring the panel to the data. |
+| **Nicole** | [@Miegu](https://github.com/Miegu) | First high-resolution LOLA data (Site04, 5 m/px) and the `inspect_lola_dem.py` script to inspect it and generate previews. |
+| **Juan** | [@JuanGilArregui](https://github.com/JuanGilArregui) | Split of the app into `css/` and `js/` modules. LOLA terrain: per-site horizons (`tools/lola_horizon.py`) and heat maps (`tools/lola_map.py`, Surface map view). Link to Earth (DSN and link budget), date ranges, full-screen comparison studio with charts, SPICE switch, playback (Play), readability and code formatting. |
+
+Built for the NASA Space Apps Challenge 2026.
