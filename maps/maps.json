@@ -1,0 +1,14 @@
+{
+ "scale_max": {
+  "sun": 0.6,
+  "earth": 1.0
+ },
+ "start_utc": "2026-11-10T12:00:00",
+ "days": 365,
+ "step_h": 6,
+ "grid_km": 2.0,
+ "extent_m": 300000,
+ "latitude_limit": -80,
+ "projection": "south polar stereographic, 0\u00b0E at the top",
+ "source": "LOLA LDEM_80S_40M horizons + SPICE (de442s) Sun/Earth directions"
+}
